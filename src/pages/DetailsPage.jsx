@@ -1,58 +1,48 @@
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import ReviewList from "../components/ReviewList";
 
-const movies = [
-  {
-    id: 1,
-    title: "The Godfather 1 ",
-    director: "Francis Ford Coppola",
-    genre: "Crime",
-    release_year: 1972,
-    abstract:
-      "The story of a powerful Italian-American crime family and their struggles.",
-    image: "public/movies_cover/the_godfather.jpg",
-    created_at: "2024-11-29T10:40:13.000Z",
-    updated_at: "2025-05-22T10:55:27.000Z",
-  },
-  {
-    id: 2,
-    title: "The Godfather 2 ",
-    director: "Francis Ford Coppola",
-    genre: "Crime",
-    release_year: 1972,
-    abstract:
-      "The story of a powerful Italian-American crime family and their struggles.",
-    image: "public/movies_cover/the_godfather.jpg",
-    created_at: "2024-11-29T10:40:13.000Z",
-    updated_at: "2025-05-22T10:55:27.000Z",
-  },
-  {
-    id: 3,
-    title: "The Godfather 3",
-    director: "Francis Ford Coppola",
-    genre: "Crime",
-    release_year: 1972,
-    abstract:
-      "The story of a powerful Italian-American crime family and their struggles.",
-    image: "public/movies_cover/the_godfather.jpg",
-    created_at: "2024-11-29T10:40:13.000Z",
-    updated_at: "2025-05-22T10:55:27.000Z",
-  },
-];
-
 export default function DetailsPage() {
+  const { id } = useParams();
+  const [movie, setMovie] = useState(null);
+
+  useEffect(() => {
+    axios.get(`http://localhost:3000/movies/${id}`).then((res) => {
+      setMovie(res.data.data);
+    });
+  }, [id]);
+
   return (
     <>
       <section>
         <div className="container my-2">
-          <h1>{movies.title} </h1>
-          <img src={movies.image} alt="" />
+          <h1>{movie.title}</h1>
+          <img
+            src={`http://localhost:3000/images/${movie.image}`}
+            alt={movie.title}
+            className="img-fluid rounded shadow-sm"
+          />
+
+          <p>
+            <strong>Regista:</strong> {movie.director}
+          </p>
+          <p>
+            <strong>Genere:</strong> {movie.genre}
+          </p>
+          <p>
+            <strong>Anno:</strong> {movie.release_year}
+          </p>
+          <p>
+            <strong>Descrizione:</strong> {movie.abstract}
+          </p>
         </div>
       </section>
-      <ReviewList />
+
       <section>
         <div className="container my-2">
           <h2>Reviews</h2>
-          <p>Lista delle recensioni</p>
+          <ReviewList movieId={id} />
         </div>
       </section>
     </>
