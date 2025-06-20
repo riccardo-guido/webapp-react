@@ -1,35 +1,38 @@
-import ReviewCard from "./ReviewCard";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-export default function ReviewList() {
-  const reviews = [
-    {
-      id: 1,
-      name: "R",
-      vote: 4,
-      text: "recensione",
-    },
-    {
-      id: 2,
-      name: "R",
-      vote: 4,
-      text: "recensione",
-    },
-    {
-      id: 3,
-      name: "R",
-      vote: 4,
-      text: "recensione",
-    },
-  ];
+const apiBaseUrl = "http://localhost:3000/movies/";
+
+export default function ReviewList({ movieId }) {
+  const [reviews, setReviews] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!movieId) return;
+
+    axios
+      .get(`${apiBaseUrl}${movieId}/reviews`)
+      .then((res) => {
+        setReviews(res.data.data);
+      })
+      .catch((err) => {
+        console.error("Errore nel caricamento recensioni:", err);
+        setError(err);
+      });
+  }, [movieId]);
+
+  if (error) return <p>Errore nel caricamento recensioni</p>;
+  if (!reviews.length) return <p>Nessuna recensione trovata</p>;
 
   return (
-    <section>
-      <div className="container my-2">
-        <h2>Reviews</h2>
+    <div className="container">
+      <ul className="list-group my-4">
         {reviews.map((review) => (
-          <ReviewCard key={review.id} review={review} />
+          <li key={review.id} className="list-group-item">
+            <strong>{review.name}</strong>: {review.text} – ⭐ {review.vote}
+          </li>
         ))}
-      </div>
-    </section>
+      </ul>
+    </div>
   );
 }
