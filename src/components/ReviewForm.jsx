@@ -1,13 +1,21 @@
 import { useState } from "react";
+import axios from "axios";
 
 const formInitialData = {
-  name: "",
-  vote: 1,
-  text: "",
+  name: "Ric",
+  vote: 5,
+  text: "best film",
 };
 
 export default function ReviewForm({ movieId }) {
   const [formData, setFormData] = useState(formInitialData);
+
+  const movieApiUrl = `http://localhost:3000/movies/${movieId}/reviews`;
+  const fetchStoreReview = () => {
+    axios.post(movieApiUrl, formData).then((res) => {
+      console.log(res);
+    });
+  };
 
   const handleInputChange = (e) => {
     setFormData({
@@ -18,7 +26,7 @@ export default function ReviewForm({ movieId }) {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    console.log("form inviato");
+    fetchStoreReview();
   };
   return (
     <section className="my-5">
